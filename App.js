@@ -8,23 +8,23 @@ import AnimatedSplash from 'react-native-animated-splash-screen';
 import TabsComponent from './src/components/TabsComponent';
 import WalkThrough from './src/screens/onboarding/WalkThrough';
 import GetStarted from './src/screens/onboarding/GetStarted';
-import Register from './src/screens/auth/Register'
-import Login from './src/screens/auth/Login'
-import CodeInput from './src/screens/auth/CodeInput'
-import PinInput from './src/screens/auth/PinInput'
+import Register from './src/screens/auth/Register';
+import Login from './src/screens/auth/Login';
+import CodeInput from './src/screens/auth/CodeInput';
+import PinInput from './src/screens/auth/PinInput';
 
 const AuthStack = createStackNavigator();
 const AuthStackScreen = () => (
   <AuthStack.Navigator headerMode="none">
-    {/* <AuthStack.Screen name="Register" component={Register} /> */}
+    <AuthStack.Screen name="Register" component={Register} />
+    <AuthStack.Screen name="Login" component={Login} />
   </AuthStack.Navigator>
 );
 
 const TabStack = createStackNavigator();
 const TabStackScreen = () => (
   <TabStack.Navigator headerMode="none">
-    {/* <TabStack.Screen name="Tabs" component={TabsComponent} />
-    <TabStack.Screen name="RegisterTest" component={Register} /> */}
+    <TabStack.Screen name="Tabs" component={TabsComponent} />
   </TabStack.Navigator>
 );
 
@@ -69,11 +69,28 @@ const App = () => {
   const [splash, setSplash] = React.useState(false);
   const [userStatus, setUserStatus] = React.useState(null);
 
+  React.useEffect(() => {
+    async function checkUserStatus() {
+      setIsLoading(true);
+      try {
+        const value = await AsyncStorage.getItem('@user_onboarded');
+        if (value) {
+          setUserStatus(value);
+        } else {
+          setUserStatus(null);
+        }
+      } catch (e) {}
+    }
+    checkUserStatus();
+  }, []);
+
   const authContext = React.useMemo(() => {
     return {
       signIn: async () => {
         try {
           const value = await AsyncStorage.getItem('@user_token');
+          console.log('value');
+          console.log(value);
           if (value !== null) {
             setUserToken(value);
           } else {
@@ -134,8 +151,14 @@ const App = () => {
   }, []);
 
   if (userStatus === 'true') {
-    if (Platform.OS === 'ios') {
-      return (
+    return (
+      <AnimatedSplash
+        translucent={true}
+        isLoaded={splash}
+        logoImage={require('./src/assets/images/logo.png')}
+        backgroundColor={'#fff'}
+        logoHeight={250}
+        logoWidth={300}>
         <>
           <StatusBar barStyle="dark-content" />
           <AuthContext.Provider value={authContext}>
@@ -144,28 +167,8 @@ const App = () => {
             </NavigationContainer>
           </AuthContext.Provider>
         </>
-      );
-    } else {
-      return (
-        <AnimatedSplash
-          translucent={true}
-          isLoaded={splash}
-          logoImage={require('./src/assets/images/logo.png')}
-          backgroundColor={'#fff'}
-          logoHeight={250}
-          logoWidth={300}>
-          <>
-            <StatusBar barStyle="dark-content" />
-
-            <AuthContext.Provider value={authContext}>
-              <NavigationContainer>
-                <RootStackScreen userToken={userToken} />
-              </NavigationContainer>
-            </AuthContext.Provider>
-          </>
-        </AnimatedSplash>
-      );
-    }
+      </AnimatedSplash>
+    );
   }
   return (
     <AnimatedSplash

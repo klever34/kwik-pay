@@ -119,6 +119,7 @@ const Register = props => {
             <Text style={styles.btnText}>CONTINUE</Text>
           </TouchableOpacity>
           <Text
+          onPress={() => props.navigation.push('Login')}
             style={{
               fontSize: 11,
               fontFamily: 'GoogleSans-Regular',

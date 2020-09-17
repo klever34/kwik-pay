@@ -10,10 +10,18 @@ import {
 } from 'react-native';
 import {colors} from '../../constants/index';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage';
+import {AuthContext} from '../../../context';
 
 const Login = props => {
   const [borderIndex, setBorderIndex] = useState(0);
+  const {signIn} = React.useContext(AuthContext);
 
+  const authUser = async () => {
+    await AsyncStorage.setItem('@user_token', 'zagadatzagadatzagadatzagadatzagadatzagadatzagadat')
+    signIn()
+  }
+  
   return (
     <ImageBackground
       source={require('../../assets/images/image_three.png')}
@@ -63,7 +71,7 @@ const Login = props => {
           </View>
           <TouchableOpacity
             style={styles.topBtn}
-            onPress={() => props.navigation.push('CodeInput')}>
+            onPress={() => authUser()}>
             <Text style={styles.btnText}>CONTINUE</Text>
           </TouchableOpacity>
           <View>
@@ -77,6 +85,7 @@ const Login = props => {
                 Forgot Password?
               </Text>
               <Text
+              onPress={() => props.navigation.push('Register')}
                 style={{
                   fontSize: 11,
                   fontFamily: 'GoogleSans-Bold',
