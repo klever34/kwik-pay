@@ -1,4 +1,4 @@
-export const baseUrl = '';
+export const baseUrl = 'http://ec2-34-245-24-38.eu-west-1.compute.amazonaws.com:4443/';
 
 export const colors = {
   primary: '#3db846',

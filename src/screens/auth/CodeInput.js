@@ -8,9 +8,35 @@ import {
   Image,
   Platform
 } from 'react-native';
-import {colors, phone} from '../../constants';
+import {colors, phone, baseUrl} from '../../constants';
+import axios from 'axios';
 
 const CodeInput = props => {
+  const {user} = props.route.params;
+  console.log(user);
+
+  const registerUser = async () => {
+    if (!username || !email || !password || !phone) {
+      alert('All fields are required');
+      return;
+    }
+    setIndicator(true);
+    // props.navigation.push('CodeInput',{
+    //   user: userData
+    // })
+    try {
+      const response = await axios.post(
+        `${baseUrl}users/create/user`,
+        userData,
+      );
+      console.log(response.data.data);
+      
+      //setIndicator(false);
+    } catch (error) {
+      console.log(error.response);
+      setIndicator(false);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.body}>
@@ -30,16 +56,16 @@ const CodeInput = props => {
             paddingTop: Platform.OS === 'ios' ? 40: 0
           }}>
           <View style={styles.txtInputBox}>
-            <TextInput placeholder={''} style={{width: 30}} />
+            <TextInput placeholder={''} style={{width: 30, fontFamily: 'GoogleSans-Regular'}} keyboardType={'number-pad'} maxLength={1} />
           </View>
           <View style={styles.txtInputBox}>
-            <TextInput placeholder={''} style={{width: 30}} />
+            <TextInput placeholder={''} style={{width: 30, fontFamily: 'GoogleSans-Regular'}} keyboardType={'number-pad'} maxLength={1} />
           </View>
           <View style={styles.txtInputBox}>
-            <TextInput placeholder={''} style={{width: 30}} />
+            <TextInput placeholder={''} style={{width: 30, fontFamily: 'GoogleSans-Regular'}} keyboardType={'number-pad'} maxLength={1} />
           </View>
           <View style={styles.txtInputBox}>
-            <TextInput placeholder={''} style={{width: 30}} />
+            <TextInput placeholder={''} style={{width: 30, fontFamily: 'GoogleSans-Regular'}} keyboardType={'number-pad'} maxLength={1} />
           </View>
         </View>
 
@@ -51,7 +77,7 @@ const CodeInput = props => {
             onPress={() => props.navigation.push('PinInput')}>
             <Text style={styles.btnText}>CONFIRM</Text>
           </TouchableOpacity>
-        <Text style={[styles.smallText]}>
+        <Text style={[styles.smallText]} onPress={() => props.navigation.goBack()}>
           Close
         </Text>
       </View>
@@ -83,7 +109,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#000',
     marginHorizontal: 10,
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   topBtn: {
     backgroundColor: colors.primary,
